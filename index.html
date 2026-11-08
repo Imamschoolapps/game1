@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>شدّ الحبل | Tug of War</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap');
+:root{--navy:#14243b;--navy2:#203957;--blue:#3288e8;--red:#ef625c;--gold:#f5c75e;--bg:#f3f6fb;--ink:#17263b;--muted:#738198;--line:#e3e9f2;--white:#fff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:'Cairo',sans-serif}
+button,input,select{font:inherit}button{cursor:pointer;border:0;border-radius:12px;padding:10px 16px;font-weight:800}
+.primary{background:var(--navy);color:white}.blue{background:var(--blue);color:white}.red{background:var(--red);color:white}.soft{background:#edf2f8;color:var(--navy)}.gold{background:var(--gold);color:#4a3510}
+header{background:linear-gradient(115deg,#14243b,#294b70);color:white;padding:22px max(20px,calc((100% - 1280px)/2));display:flex;align-items:center;justify-content:space-between;gap:15px}
+.brand{display:flex;align-items:center;gap:13px}.logo{width:48px;height:48px;border-radius:15px;background:linear-gradient(135deg,#f5c75e,#f08c4c);display:grid;place-items:center;font-size:26px;color:#24354b}
+.brand h1{font-size:23px;margin:0;font-weight:900}.brand p{margin:0;color:#c6d4e5;font-size:12px}
+.status{border:1px solid #59708d;border-radius:99px;padding:6px 12px;font-size:12px;color:#e5edf7}
+.shell{max-width:1280px;margin:22px auto;padding:0 18px;display:grid;grid-template-columns:235px 1fr;gap:18px}
+nav,.panel,.card{background:white;border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 25px #1a35500a}
+nav{padding:12px;height:max-content;position:sticky;top:12px}nav button{display:flex;width:100%;text-align:right;background:transparent;color:#596a80;margin:3px 0;align-items:center;gap:10px}nav button.active,nav button:hover{background:#edf3fb;color:#183758}
+main{min-width:0}.view{display:none}.view.active{display:block}.pagehead{display:flex;justify-content:space-between;align-items:center;margin:2px 0 16px;gap:12px}.pagehead h2{margin:0;font-size:23px}.sub{color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.card{padding:17px}.stat{font-size:27px;font-weight:900}.label{color:var(--muted);font-size:12px}.panel{padding:18px;margin-bottom:14px}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.between{justify-content:space-between}.field{display:flex;flex-direction:column;gap:5px;min-width:130px;flex:1}.field label{font-size:12px;color:var(--muted);font-weight:700}.field input,.field select{border:1px solid var(--line);background:#fbfcfe;padding:10px 12px;border-radius:10px;min-width:0;color:var(--ink)}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 8px;text-align:right;border-bottom:1px solid var(--line)}th{color:var(--muted);font-size:11px}
+.teamlist{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.team{border:1px solid var(--line);border-radius:14px;padding:14px}.team.blueTeam{border-top:4px solid var(--blue)}.team.redTeam{border-top:4px solid var(--red)}
+.pill{display:inline-block;border-radius:99px;padding:4px 10px;font-size:11px;background:#edf2f8;color:#4f6078}
+#arena{height:310px;border-radius:16px;overflow:hidden;background:linear-gradient(#cfe9ff,#e9f4ff 56%,#80bd77 56%,#5b9e60);position:relative}
+#arena canvas{display:block;width:100%;height:100%}
+.gamehud{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}.scorebox{padding:13px;border-radius:13px;color:white}.scorebox.bluebox{background:var(--blue)}.scorebox.redbox{background:var(--red)}.scorebox strong{font-size:25px}
+.question{background:#f7f9fc;border:1px solid var(--line);border-radius:15px;padding:17px;margin-top:12px}.qtext{font-size:19px;font-weight:900;margin:8px 0 13px}.options{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.option{background:white;border:1px solid #dce4ef;color:var(--ink);text-align:right}.option:hover{border-color:var(--blue);background:#eef6ff}
+.timer{font-size:25px;font-weight:900;color:#d18b20}.bracket{display:flex;gap:12px;overflow:auto;padding:10px}.round{min-width:190px;display:flex;flex-direction:column;gap:12px}.match{background:#f8fafd;border:1px solid var(--line);border-radius:12px;padding:12px;font-size:12px}.winner{color:#188653;font-weight:900}
+.notice{padding:11px 13px;background:#fff8e8;border:1px solid #f4dfae;border-radius:12px;color:#77591b;font-size:12px;margin:10px 0}
+footer{text-align:center;color:#8a96a8;font-size:11px;padding:24px}
+@media(max-width:850px){.shell{grid-template-columns:1fr}nav{position:static;display:flex;overflow:auto}nav button{min-width:max-content;width:auto}.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){header{padding:15px}.brand h1{font-size:18px}.grid,.teamlist{grid-template-columns:1fr}.options{grid-template-columns:1fr}.pagehead{align-items:flex-start;flex-direction:column}#arena{height:240px}}
+</style>
+</head>
+<body>
+<header><div class="brand"><div class="logo">⚡</div><div><h1>شدّ الحبل</h1><p>TUG OF WAR · تحدّي المعرفة</p></div></div><div class="status">نسخة تصميم أولية · تعمل محلياً</div></header>
+<div class="shell">
+<nav>
+<button class="active" data-view="home">🏠 الرئيسية</button>
+<button data-view="students">👥 بيانات الطلاب</button>
+<button data-view="questions">📚 بنك الأسئلة</button>
+<button data-view="teams">🧩 تشكيل الفرق</button>
+<button data-view="setup">🏆 إعداد البطولة</button>
+<button data-view="game">🪢 ساحة المواجهة</button>
+<button data-view="bracket">🥇 جدول البطولة</button>
+</nav>
+<main>
+<section id="home" class="view active">
+<div class="pagehead"><div><h2>مرحباً بك في ساحة التحدي</h2><div class="sub">أنشئ بطولة صفية، وزّع الطلاب، وابدأ المنافسة.</div></div><button class="primary" onclick="go('setup')">إعداد بطولة جديدة ←</button></div>
+<div class="grid">
+<div class="card"><div class="label">الطلاب المسجلون</div><div class="stat" id="statStudents">6</div></div>
+<div class="card"><div class="label">الأسئلة في البنك</div><div class="stat" id="statQuestions">8</div></div>
+<div class="card"><div class="label">الفرق الحالية</div><div class="stat" id="statTeams">2</div></div>
+</div>
+<div class="panel" style="margin-top:14px"><h3>كيف تلعب؟</h3><div class="grid">
+<div><b>١. جهّز البيانات</b><p class="sub">استورد الطلاب والأسئلة من ملفات Excel أو استخدم البيانات التجريبية.</p></div>
+<div><b>٢. شكّل الفرق</b><p class="sub">اختر التوزيع اليدوي أو العشوائي، ثم اعتمد الفرق.</p></div>
+<div><b>٣. ابدأ البطولة</b><p class="sub">تناوب في الإجابة، واجمع النقاط حتى يتوّج البطل.</p></div>
+</div><div class="notice">هذه نسخة أولية قابلة للتجربة والتطوير. مشهد الملعب ثلاثي الأبعاد يعتمد على اتصال الإنترنت لتحميل مكتبة Three.js.</div></div>
+</section>
+<section id="students" class="view">
+<div class="pagehead"><div><h2>بيانات الطلاب</h2><div class="sub">استيراد ملف Excel أو إضافة الطلاب يدوياً.</div></div><div class="row"><button class="soft" onclick="downloadTemplate('students')">تنزيل القالب</button><label class="primary" style="padding:10px 14px;border-radius:12px;cursor:pointer">استيراد Excel<input hidden type="file" accept=".xlsx,.xls,.csv" onchange="importFile(event,'students')"></label></div></div>
+<div class="panel"><div class="row"><div class="field"><label>رقم الطالب</label><input id="sid" placeholder="مثال: 107"></div><div class="field"><label>اسم الطالب</label><input id="sname" placeholder="اسم الطالب"></div><div class="field"><label>الصف</label><input id="grade" placeholder="أول متوسط"></div><div class="field"><label>الفصل</label><input id="section" placeholder="أ"></div><button class="primary" onclick="addStudent()">إضافة طالب</button></div></div>
+<div class="panel"><div class="row between"><b>قائمة الطلاب</b><span class="pill" id="studentCount"></span></div><div style="overflow:auto"><table><thead><tr><th>الرقم</th><th>الاسم</th><th>الصف</th><th>الفصل</th><th></th></tr></thead><tbody id="studentRows"></tbody></table></div></div>
+</section>
+<section id="questions" class="view">
+<div class="pagehead"><div><h2>بنك الأسئلة</h2><div class="sub">أضف الأسئلة أو استوردها من ملف Excel.</div></div><div class="row"><button class="soft" onclick="downloadTemplate('questions')">تنزيل القالب</button><label class="primary" style="padding:10px 14px;border-radius:12px;cursor:pointer">استيراد Excel<input hidden type="file" accept=".xlsx,.xls,.csv" onchange="importFile(event,'questions')"></label></div></div>
+<div class="panel"><div class="row"><div class="field"><label>السؤال</label><input id="qtext" placeholder="اكتب السؤال هنا"></div><div class="field"><label>الخيار A</label><input id="qa" placeholder="الخيار الأول"></div><div class="field"><label>الخيار B</label><input id="qb" placeholder="الخيار الثاني"></div><div class="field"><label>الخيار C</label><input id="qc" placeholder="الخيار الثالث"></div><div class="field"><label>الإجابة الصحيحة</label><select id="qcorrect"><option value="A">A</option><option value="B">B</option><option value="C">C</option></select></div><button class="primary" onclick="addQuestion()">إضافة</button></div></div>
+<div class="panel"><b>الأسئلة المحفوظة</b><div style="overflow:auto"><table><thead><tr><th>#</th><th>السؤال</th><th>النوع</th><th>الإجابة</th><th></th></tr></thead><tbody id="questionRows"></tbody></table></div></div>
+</section>
+<section id="teams" class="view">
+<div class="pagehead"><div><h2>تشكيل الفرق</h2><div class="sub">اختر طريقة التوزيع ثم اعتمد التشكيل.</div></div></div>
+<div class="panel"><div class="row"><div class="field"><label>طريقة التشكيل</label><select id="teamMode"><option value="random">عشوائي</option><option value="manual">يدوي (توزيع بالتناوب)</option></select></div><div class="field"><label>عدد الفرق</label><input id="teamCount" type="number" min="2" max="16" value="2"></div><button class="primary" onclick="makeTeams()">تشكيل الفرق</button></div><div class="notice">التوزيع اليدوي في هذه النسخة الأولية يوزع الطلاب حسب ترتيب القائمة بالتناوب بين الفرق، ويمكن تطوير السحب والإفلات لاحقاً.</div></div>
+<div class="teamlist" id="teamCards"></div>
+</section>
+<section id="setup" class="view">
+<div class="pagehead"><div><h2>إعداد البطولة</h2><div class="sub">اضبط قواعد المواجهة قبل بدء اللعب.</div></div></div>
+<div class="panel"><div class="row">
+<div class="field"><label>اسم البطولة</label><input id="tournamentName" value="بطولة شد الحبل"></div>
+<div class="field"><label>عدد الأسئلة لكل فريق</label><input id="qPerTeam" type="number" min="1" value="5"></div>
+<div class="field"><label>الإجابات الصحيحة للفوز</label><input id="winTarget" type="number" min="1" value="3"></div>
+<div class="field"><label>زمن السؤال (ثانية)</label><input id="seconds" type="number" min="5" value="20"></div>
+</div><div class="row" style="margin-top:14px"><label><input type="checkbox" id="shuffleQ" checked> ترتيب الأسئلة عشوائياً</label><label><input type="checkbox" id="soundOn" checked> المؤثرات الصوتية</label></div>
+<div class="notice">يشترط وجود فريقين على الأقل وأسئلة كافية. عند التعادل تبدأ جولة سؤال فاصل بفرص متكافئة.</div><button class="primary" onclick="startTournament()">اعتماد الإعدادات وبدء البطولة</button></div>
+</section>
+<section id="game" class="view">
+<div class="pagehead"><div><h2>ساحة المواجهة</h2><div class="sub" id="matchLabel">الفريق الأزرق × الفريق الأحمر</div></div><div class="row"><button class="soft" onclick="pauseGame()">إيقاف مؤقت</button><button class="soft" onclick="resumeGame()">استئناف</button></div></div>
+<div id="arena"></div>
+<div class="gamehud"><div class="scorebox bluebox"><div id="blueName">الفريق الأزرق</div><strong id="blueScore">0</strong><small> إجابة صحيحة</small></div><div class="scorebox redbox"><div id="redName">الفريق الأحمر</div><strong id="redScore">0</strong><small> إجابة صحيحة</small></div></div>
+<div class="panel"><div class="row between"><div><span class="pill" id="turnTeam">دور الفريق الأزرق</span><div style="font-weight:900;margin-top:6px" id="playerTurn">الطالب: أحمد</div></div><div class="timer" id="timer">20</div></div>
+<div class="question"><div class="label" id="qNumber">السؤال 1</div><div class="qtext" id="questionText">ما ناتج 5 × 5؟</div><div class="options" id="options"></div><div class="row between" style="margin-top:12px"><span class="sub" id="feedback">اختر الإجابة الصحيحة.</span><button class="soft" onclick="skipQuestion()">تجاوز السؤال</button></div></div></div>
+</section>
+<section id="bracket" class="view">
+<div class="pagehead"><div><h2>جدول البطولة</h2><div class="sub">مسار التأهل حتى المباراة النهائية.</div></div><button class="soft" onclick="exportResults()">تصدير النتائج Excel</button></div>
+<div class="panel"><div class="bracket" id="bracketView"><div class="sub">ابدأ البطولة لعرض جدول المواجهات.</div></div></div>
+<div class="panel"><h3>نتائج المواجهات</h3><div style="overflow:auto"><table><thead><tr><th>المواجهة</th><th>الفريق الأول</th><th>الفريق الثاني</th><th>النتيجة</th><th>الفائز</th></tr></thead><tbody id="resultsRows"></tbody></table></div></div>
+</section>
+</main></div><footer>شدّ الحبل التعليمية · نموذج أولي للتصميم والتجربة</footer>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+let students=[{student_id:'101',student_name:'أحمد',grade:'أول متوسط',section:'أ'},{student_id:'102',student_name:'محمد',grade:'أول متوسط',section:'أ'},{student_id:'103',student_name:'علي',grade:'أول متوسط',section:'أ'},{student_id:'104',student_name:'خالد',grade:'أول متوسط',section:'ب'},{student_id:'105',student_name:'فهد',grade:'أول متوسط',section:'ب'},{student_id:'106',student_name:'سعد',grade:'أول متوسط',section:'ب'}];
+let questions=[
+{question_id:1,question_text:'ما ناتج 5 × 5؟',question_type:'MCQ',option_a:'20',option_b:'25',option_c:'30',option_d:'35',correct_answer:'B'},
+{question_id:2,question_text:'عاصمة المملكة العربية السعودية؟',question_type:'MCQ',option_a:'جدة',option_b:'الرياض',option_c:'مكة',option_d:'الدمام',correct_answer:'B'},
+{question_id:3,question_text:'الشمس نجم.',question_type:'TF',option_a:'صح',option_b:'خطأ',correct_answer:'A'},
+{question_id:4,question_text:'كم عدد أضلاع المثلث؟',question_type:'MCQ',option_a:'ثلاثة',option_b:'أربعة',option_c:'خمسة',option_d:'ستة',correct_answer:'A'},
+{question_id:5,question_text:'الماء يتكون من الهيدروجين والأكسجين.',question_type:'TF',option_a:'صح',option_b:'خطأ',correct_answer:'A'},
+{question_id:6,question_text:'ما ناتج 9 + 6؟',question_type:'MCQ',option_a:'14',option_b:'15',option_c:'16',option_d:'17',correct_answer:'B'},
+{question_id:7,question_text:'الأرض تدور حول الشمس.',question_type:'TF',option_a:'صح',option_b:'خطأ',correct_answer:'A'},
+{question_id:8,question_text:'ما وحدة قياس الكتلة؟',question_type:'MCQ',option_a:'المتر',option_b:'الثانية',option_c:'الكيلوغرام',option_d:'اللتر',correct_answer:'C'}];
+let teams=[],rounds=[],results=[],match=null,timer=null,paused=false,scene,camera,renderer,ropeGroup,ropeMarker,ropeX=0,ropeReady=false;
+const $=id=>document.getElementById(id);
+function save(){localStorage.setItem('tug_students',JSON.stringify(students));localStorage.setItem('tug_questions',JSON.stringify(questions));localStorage.setItem('tug_teams',JSON.stringify(teams));localStorage.setItem('tug_results',JSON.stringify(results))}
+function stats(){$('statStudents').textContent=students.length;$('statQuestions').textContent=questions.length;$('statTeams').textContent=teams.length}
+window.go=id=>{document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===id));if(id==='game')init3D();};
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>go(b.dataset.view));
+function renderStudents(){$('studentRows').innerHTML=students.map(s=>`<tr><td>${s.student_id}</td><td>${s.student_name}</td><td>${s.grade||''}</td><td>${s.section||''}</td><td><button class="soft" onclick="removeStudent('${s.student_id}')">حذف</button></td></tr>`).join('');$('studentCount').textContent=students.length+' طالب';stats()}
+window.removeStudent=id=>{students=students.filter(s=>s.student_id!==id);renderStudents();save()};
+window.addStudent=()=>{let id=$('sid').value.trim(),name=$('sname').value.trim();if(!id||!name)return alert('أدخل رقم الطالب واسمه.');if(students.some(s=>s.student_id===id))return alert('رقم الطالب موجود مسبقاً.');students.push({student_id:id,student_name:name,grade:$('grade').value,section:$('section').value});['sid','sname','grade','section'].forEach(x=>$(x).value='');renderStudents();save()};
+function renderQuestions(){$('questionRows').innerHTML=questions.map((q,i)=>`<tr><td>${i+1}</td><td>${q.question_text}</td><td>${q.question_type||'MCQ'}</td><td>${q.correct_answer}</td><td><button class="soft" onclick="removeQuestion(${i})">حذف</button></td></tr>`).join('');stats()}
+window.removeQuestion=i=>{questions.splice(i,1);renderQuestions();save()};
+window.addQuestion=()=>{let text=$('qtext').value.trim();if(!text)return alert('اكتب نص السؤال.');questions.push({question_id:Date.now(),question_text:text,question_type:'MCQ',option_a:$('qa').value,option_b:$('qb').value,option_c:$('qc').value,correct_answer:$('qcorrect').value});['qtext','qa','qb','qc'].forEach(x=>$(x).value='');renderQuestions();save()};
+window.downloadTemplate=type=>{let rows=type==='students'?[{student_id:'101',student_name:'اسم الطالب',grade:'أول متوسط',section:'أ',active:true}]:[{question_id:1,question_text:'نص السؤال',question_type:'MCQ',option_a:'الخيار A',option_b:'الخيار B',option_c:'الخيار C',option_d:'الخيار D',correct_answer:'A',difficulty:'متوسط',category:'عام',time_limit:20}];let ws=XLSX.utils.json_to_sheet(rows),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,type);XLSX.writeFile(wb,type+'_template.xlsx')};
+window.importFile=(ev,type)=>{let f=ev.target.files[0];if(!f)return;let reader=new FileReader();reader.onload=e=>{try{let wb=XLSX.read(e.target.result,{type:'array'}),data=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''});if(type==='students'){let ids=new Set(students.map(s=>String(s.student_id)));data.forEach(x=>{let id=String(x.student_id||'').trim(),name=String(x.student_name||'').trim();if(id&&name&&!ids.has(id)){students.push({...x,student_id:id,student_name:name});ids.add(id)}});renderStudents()}else{data.forEach(x=>{if(x.question_text&&x.correct_answer)questions.push({...x,question_id:x.question_id||Date.now()+Math.random()})});renderQuestions()}save();alert('تم استيراد البيانات والتحقق من السجلات الأساسية.')}catch(err){alert('تعذر قراءة الملف. تحقق من القالب.')}};reader.readAsArrayBuffer(f);ev.target.value=''};
+window.makeTeams=()=>{let n=Math.max(2,Math.min(16,Number($('teamCount').value)||2));if(students.length<n)return alert('عدد الطلاب أقل من عدد الفرق.');let list=[...students];if($('teamMode').value==='random')list.sort(()=>Math.random()-.5);teams=Array.from({length:n},(_,i)=>({id:i,name:['الفريق الأزرق','الفريق الأحمر','الفريق الأخضر','الفريق الأصفر','الفريق البنفسجي','الفريق البرتقالي'][i]||`الفريق ${i+1}`,color:['#3288e8','#ef625c','#22a879','#d5a72d','#8c69d4','#e58a3c'][i%6],members:[]}));list.forEach((s,i)=>teams[i%n].members.push(s));renderTeams();stats();save();alert('تم تشكيل الفرق. راجع التوزيع قبل بدء البطولة.')};
+function renderTeams(){$('teamCards').innerHTML=teams.map((t,i)=>`<div class="team ${i%2?'redTeam':'blueTeam'}"><div class="row between"><b>${t.name}</b><span class="pill">${t.members.length} طلاب</span></div><ol>${t.members.map(s=>`<li>${s.student_name}</li>`).join('')}</ol></div>`).join('')}
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+window.startTournament=()=>{if(teams.length<2)return alert('شكّل الفرق أولاً.');if(questions.length<2)return alert('أضف أسئلة كافية.');let qpt=Math.max(1,Number($('qPerTeam').value)||5),target=Math.max(1,Number($('winTarget').value)||3);let pool=$('shuffleQ').checked?shuffle(questions):[...questions];if(pool.length<qpt*2)return alert('عدد الأسئلة أقل من المطلوب للمواجهة الأولى. أضف أسئلة أو قلل عدد الأسئلة لكل فريق.');let entrants=teams.map(t=>({...t,score:0,studentIndex:0}));rounds=[];results=[];let size=1;while(size<entrants.length)size*=2;let byes=size-entrants.length;let current=entrants.slice(0,byes).map(t=>({team:t,bye:true}));let rest=entrants.slice(byes);for(let i=0;i<rest.length;i+=2)current.push({a:rest[i],b:rest[i+1]});rounds.push({name:'الدور الأول',matches:current});$('tournamentName').dataset.name=$('tournamentName').value;startNextMatch();renderBracket();go('game')};
+function startNextMatch(){let found=null;for(let r=0;r<rounds.length;r++){for(let i=0;i<rounds[r].matches.length;i++){let m=rounds[r].matches[i];if(m.a&&m.b&&!m.done){found={r,i,m};break}}if(found)break}if(!found){let finalW=rounds.length?rounds[rounds.length-1].winner:null;if(finalW){alert('🏆 بطل البطولة: '+finalW.name);$('matchLabel').textContent='انتهت البطولة · البطل: '+finalW.name;return}return}let {r,i,m}=found;let qpt=Math.max(1,Number($('qPerTeam').value)||5);let pool=$('shuffleQ').checked?shuffle(questions):[...questions];match={r,i,a:m.a,b:m.b,scoreA:0,scoreB:0,turn:0,idxA:0,idxB:0,qa:0,qb:0,qpt,questions:pool.slice(0,qpt*2),sudden:false,suddenTurn:0,pending:null};$('matchLabel').textContent=`${m.a.name} × ${m.b.name}`;renderMatch();nextTurn()};
+function renderMatch(){$('blueName').textContent=match.a.name;$('redName').textContent=match.b.name;$('blueScore').textContent=match.scoreA;$('redScore').textContent=match.scoreB}
+function nextTurn(){if(!match)return;clearInterval(timer);let side=match.turn,team=side===0?match.a:match.b,idx=side===0?match.idxA++:match.idxB++;let student=team.members[idx%team.members.length];$('turnTeam').textContent='دور '+team.name;$('playerTurn').textContent='الطالب: '+(student?.student_name||'—');let q;if(match.sudden){q=match.questions[(match.qpt*2+match.suddenTurn)%match.questions.length]}else{let offset=side===0?0:match.qpt;q=match.questions[offset+(side===0?match.qa:match.qb)]}if(!q){finishTurn();return}match.pending=q;renderQuestion(q);let secs=Math.max(5,Number($('seconds').value)||20);$('timer').textContent=secs;let remaining=secs;timer=setInterval(()=>{if(paused)return;remaining--;$('timer').textContent=remaining;if(remaining<=0){clearInterval(timer);answer(null)}},1000)}
+function renderQuestion(q){$('qNumber').textContent=match.sudden?'سؤال فاصل':'السؤال '+((match.turn===0?match.qa:match.qb)+1);$('questionText').textContent=q.question_text;$('feedback').textContent='اختر الإجابة الصحيحة.';let opts=q.question_type==='TF'?[['A',q.option_a||'صح'],['B',q.option_b||'خطأ']]:[['A',q.option_a],['B',q.option_b],['C',q.option_c],['D',q.option_d]].filter(x=>x[1]);$('options').innerHTML=opts.map(([k,v])=>`<button class="option" onclick="answer('${k}')">${k}. ${v}</button>`).join('')}
+window.answer=key=>{if(!match||!match.pending)return;clearInterval(timer);let correct=key&&String(key).toUpperCase()===String(match.pending.correct_answer).toUpperCase();let side=match.turn;if(match.sudden){match.pending=null;if(correct){match.suddenPending={side,correct:true};$('feedback').textContent='إجابة صحيحة؛ ننتظر إجابة الفريق الآخر.'}else{$('feedback').textContent='إجابة غير صحيحة؛ ننتظر إجابة الفريق الآخر.'}if(match.suddenTurn%2===0){match.suddenFirst={side,correct};match.suddenTurn++;match.turn=1-side;nextTurn();return}else{let first=match.suddenFirst;if(first.correct!==correct){let winSide=first.correct?first.side:side;endMatch(winSide===0?match.a:match.b);return}match.suddenTurn++;match.turn=1-side;nextTurn();return}}
+if(correct){if(side===0){match.scoreA++;match.qa++}else{match.scoreB++;match.qb++}ropeX+=side===0?-.22:.22;moveRope(ropeX);$('feedback').textContent='إجابة صحيحة! تحرّك الحبل.'}else{if(side===0)match.qa++;else match.qb++;$('feedback').textContent='ليست الإجابة الصحيحة. لا يتحرك الحبل.'}
+renderMatch();let target=Math.max(1,Number($('winTarget').value)||3);if(match.scoreA>=target)return endMatch(match.a);if(match.scoreB>=target)return endMatch(match.b);
+if(match.qa>=match.qpt&&match.qb>=match.qpt){if(match.scoreA>match.scoreB)return endMatch(match.a);if(match.scoreB>match.scoreA)return endMatch(match.b);match.sudden=true;match.suddenTurn=0;$('feedback').textContent='تعادل! تبدأ الآن جولة السؤال الفاصل.';setTimeout(()=>{match.turn=0;nextTurn()},1100);return}
+match.turn=1-side;setTimeout(nextTurn,900)};
+window.skipQuestion=()=>{if(!match)return;answer(null)};
+window.pauseGame=()=>{paused=true;$('feedback').textContent='اللعبة متوقفة مؤقتاً.'};
+window.resumeGame=()=>{paused=false};
+function finishTurn(){match.turn=1-match.turn;nextTurn()}
+function endMatch(winner){clearInterval(timer);let loser=winner.id===match.a.id?match.b:match.a;let r=rounds[match.r];r.matches[match.i].done=true;r.matches[match.i].winner=winner;results.push({name:r.name,a:match.a.name,b:match.b.name,score:`${match.scoreA} - ${match.scoreB}`,winner:winner.name});r.matches[match.i].result=`${match.scoreA} - ${match.scoreB}`;r.matches[match.i].winner=winner;renderBracket();$('feedback').textContent='الفائز: '+winner.name;match=null;setTimeout(()=>advanceBracket(winner),1500)}
+function advanceBracket(winner){let r=rounds[rounds.length-1];let allDone=r.matches.every(m=>m.bye||m.done);if(allDone){let winners=r.matches.map(m=>m.winner||m.team).filter(Boolean);if(winners.length===1){alert('🏆 بطل البطولة: '+winners[0].name);$('matchLabel').textContent='بطل البطولة: '+winners[0].name;renderBracket();return}let next=[];for(let i=0;i<winners.length;i+=2)next.push({a:winners[i],b:winners[i+1]});rounds.push({name:roundName(rounds.length),matches:next});}startNextMatch();renderBracket()}
+function roundName(i){return ['الدور الأول','ربع النهائي','نصف النهائي','النهائي'][Math.min(i,3)]||'الدور '+(i+1)}
+function renderBracket(){$('bracketView').innerHTML=rounds.map(r=>`<div class="round"><b>${r.name}</b>${r.matches.map(m=>`<div class="match"><div>${m.a?.name||m.team?.name||'تأهل تلقائي'}</div><div>${m.b?.name||''}</div><hr><div>${m.result|| (m.bye?'تأهل تلقائي':'بانتظار المواجهة')}</div><div class="winner">${m.winner?'الفائز: '+m.winner.name:''}</div></div>`).join('')}</div>`).join('');$('resultsRows').innerHTML=results.map(x=>`<tr><td>${x.name}</td><td>${x.a}</td><td>${x.b}</td><td>${x.score}</td><td>${x.winner}</td></tr>`).join('')}
+window.exportResults=()=>{let wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(results),'النتائج');XLSX.writeFile(wb,'tug_of_war_results.xlsx')};
+function init3D(){if(ropeReady)return;let host=$('arena');scene=new THREE.Scene();scene.background=new THREE.Color(0xcde8ff);camera=new THREE.PerspectiveCamera(45,host.clientWidth/host.clientHeight,.1,100);camera.position.set(0,5.8,12);camera.lookAt(0,1.1,0);renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setSize(host.clientWidth,host.clientHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));host.appendChild(renderer.domElement);scene.add(new THREE.HemisphereLight(0xffffff,0x47724a,2));let sun=new THREE.DirectionalLight(0xffffff,2.2);sun.position.set(-4,8,5);scene.add(sun);
+let ground=new THREE.Mesh(new THREE.PlaneGeometry(18,9),new THREE.MeshStandardMaterial({color:0x70b96b}));ground.rotation.x=-Math.PI/2;ground.position.y=-.08;scene.add(ground);
+let lineMat=new THREE.MeshBasicMaterial({color:0xffffff});for(let x of [-3,0,3]){let l=new THREE.Mesh(new THREE.BoxGeometry(.045,.01,7),lineMat);l.position.set(x,.01,0);scene.add(l)}
+ropeGroup=new THREE.Group();scene.add(ropeGroup);let rope=new THREE.Mesh(new THREE.CylinderGeometry(.07,.07,7,16),new THREE.MeshStandardMaterial({color:0x9c7044,roughness:.9}));rope.rotation.z=Math.PI/2;rope.position.y=1.25;ropeGroup.add(rope);ropeMarker=new THREE.Mesh(new THREE.BoxGeometry(.16,.55,.12),new THREE.MeshStandardMaterial({color:0xffd54f}));ropeMarker.position.set(0,1.3,0);ropeGroup.add(ropeMarker);
+function person(x,z,color){let g=new THREE.Group();let body=new THREE.Mesh(new THREE.CapsuleGeometry(.28,.65,4,8),new THREE.MeshStandardMaterial({color}));body.position.y=.75;g.add(body);let head=new THREE.Mesh(new THREE.SphereGeometry(.25,16,12),new THREE.MeshStandardMaterial({color:0xffd2aa}));head.position.y=1.38;g.add(head);let hair=new THREE.Mesh(new THREE.SphereGeometry(.255,16,8,0,Math.PI*2,0,Math.PI/2),new THREE.MeshStandardMaterial({color:0x382a22}));hair.position.y=1.48;g.add(hair);g.position.set(x,0,z);scene.add(g);return g}
+for(let i=0;i<3;i++){person(-4.1-i*.48, -1.1+i*1.1,0x3288e8);person(4.1+i*.48,-1.1+i*1.1,0xef625c)}
+function animate(){requestAnimationFrame(animate);renderer.render(scene,camera)}animate();window.addEventListener('resize',()=>{if(!renderer)return;camera.aspect=host.clientWidth/host.clientHeight;camera.updateProjectionMatrix();renderer.setSize(host.clientWidth,host.clientHeight) });ropeReady=true}
+function moveRope(x){if(ropeGroup)ropeGroup.position.x=Math.max(-1.8,Math.min(1.8,x))}
+function init(){try{students=JSON.parse(localStorage.getItem('tug_students'))||students;questions=JSON.parse(localStorage.getItem('tug_questions'))||questions;teams=JSON.parse(localStorage.getItem('tug_teams'))||[]}catch(e){}renderStudents();renderQuestions();renderTeams();stats()}
+init();
+</script>
+</body></html>
